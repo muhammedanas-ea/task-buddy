@@ -1,8 +1,16 @@
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
 import { BoardCardProps } from "./type";
 
-const BoardCard = ({ id, title, category, dueDate, onDelete, openMenuId, setOpenMenuId }: BoardCardProps) => {
-  
+const BoardCard = ({
+  id,
+  title,
+  isCompleted,
+  category,
+  dueDate,
+  onDelete,
+  openMenuId,
+  setOpenMenuId,
+}: BoardCardProps) => {
   const handleEllipsisClick = () => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -15,7 +23,13 @@ const BoardCard = ({ id, title, category, dueDate, onDelete, openMenuId, setOpen
   return (
     <div className="bg-white p-4 rounded-[12px] flex flex-col justify-between min-h-25 relative">
       <div className="flex justify-between items-start">
-        <h2 className="text-[14px] font-bold max-w-48">{title}</h2>
+        <h2
+          className={`${
+            isCompleted ? "line-through" : ""
+          } text-[14px] font-bold max-w-48`}
+        >
+          {title}
+        </h2>
         <Ellipsis
           onClick={handleEllipsisClick}
           className="cursor-pointer"

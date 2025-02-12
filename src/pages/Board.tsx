@@ -6,10 +6,20 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import useTasks from "../hooks/useTasks";
 import { GenerateError } from "../toast/Toast";
+import Loading from "../components/Loading";
+import Search from "../components/Search";
 
 const Board = () => {
-  const { loading, error, getTasksByStatus } = useTasks();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const {
+    loading,
+    error,
+    getTasksByStatus,
+    filters,
+    setSearchQuery,
+    setCategory,
+    hasResults,
+  } = useTasks();
 
   const handleDelete = async (taskId: string) => {
     try {
@@ -21,11 +31,7 @@ const Board = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12 h-[90vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B1984]"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -40,64 +46,73 @@ const Board = () => {
 
   return (
     <div>
-      <Filter />
-      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
-        <BoardColumn
-          descrption="No Tasks in To-Do"
-          title="TO-DO"
-          bgColor="bg-[#FAC3FF]"
-        >
-          {getTasksByStatus("TO-DO").map((task) => (
-            <BoardCard
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              category={task.category}
-              dueDate={task.dueon}
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </BoardColumn>
-        <BoardColumn
-          descrption="No Tasks In Progress"
-          title="IN-PROGRESS"
-          bgColor="bg-[#85D9F1]"
-        >
-          {getTasksByStatus("IN-PROGRESS").map((task) => (
-            <BoardCard
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              category={task.category}
-              dueDate={task.dueon}
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </BoardColumn>
-        <BoardColumn
-          descrption="No Completed Tasks"
-          title="COMPLETED"
-          bgColor="bg-[#A2D6A0]"
-        >
-          {getTasksByStatus("COMPLETED").map((task) => (
-            <BoardCard
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              category={task.category}
-              dueDate={task.dueon}
-              isCompleted
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </BoardColumn>
-      </div>
+      <Filter
+        searchQuery={filters.searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedCategory={filters.category}
+        onCategoryChange={setCategory}
+      />
+      {!hasResults && filters.searchQuery ? (
+        <Search />
+      ) : (
+        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <BoardColumn
+            descrption="No Tasks in To-Do"
+            title="TO-DO"
+            bgColor="bg-[#FAC3FF]"
+          >
+            {getTasksByStatus("TO-DO").map((task) => (
+              <BoardCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                category={task.category}
+                dueDate={task.dueon}
+                onDelete={handleDelete}
+                openMenuId={openMenuId}
+                setOpenMenuId={setOpenMenuId}
+              />
+            ))}
+          </BoardColumn>
+          <BoardColumn
+            descrption="No Tasks In Progress"
+            title="IN-PROGRESS"
+            bgColor="bg-[#85D9F1]"
+          >
+            {getTasksByStatus("IN-PROGRESS").map((task) => (
+              <BoardCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                category={task.category}
+                dueDate={task.dueon}
+                onDelete={handleDelete}
+                openMenuId={openMenuId}
+                setOpenMenuId={setOpenMenuId}
+              />
+            ))}
+          </BoardColumn>
+          <BoardColumn
+            descrption="No Completed Tasks"
+            title="COMPLETED"
+            bgColor="bg-[#A2D6A0]"
+          >
+            {getTasksByStatus("COMPLETED").map((task) => (
+              <BoardCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                category={task.category}
+                dueDate={task.dueon}
+                isCompleted
+                onDelete={handleDelete}
+                openMenuId={openMenuId}
+                setOpenMenuId={setOpenMenuId}
+              />
+            ))}
+          </BoardColumn>
+        </div>
+      )}
     </div>
   );
 };

@@ -7,10 +7,20 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { useState } from "react";
 import { GenerateError } from "../toast/Toast";
 import { db } from "../firebase/config";
+import Loading from "../components/Loading";
+import Search from "../components/Search";
 
 const TaskList = () => {
-  const { loading, error, getTasksByStatus } = useTasks();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const {
+    loading,
+    error,
+    getTasksByStatus,
+    filters,
+    setSearchQuery,
+    setCategory,
+    hasResults,
+  } = useTasks();
 
   const handleDelete = async (taskId: string) => {
     try {
@@ -22,11 +32,7 @@ const TaskList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12 h-[90vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7B1984]"></div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -41,70 +47,85 @@ const TaskList = () => {
 
   return (
     <div>
-      <Filter />
-      <div className="hidden md:grid grid-cols-5 border-t border-t-gray-300 py-5 text-[13px] font-bold">
-        <div className="col-span-2">Task name</div>
-        <div>Due on</div>
-        <div>Task Status</div>
-        <div>Task Category</div>
-      </div>
-      <div className="mb-6 space-y-7">
-        <TaskRow desc="No Tasks in To-Do" title="Todo" bgColor="bg-[#FAC3FF]">
-          <AddTask />
-          {getTasksByStatus("TO-DO").map((task) => (
-            <TaskCard
-              key={task.id}
-              id={task.id}
-              name={task.title}
-              dueDate={task.dueon}
-              status={task.status}
-              category={task.category}
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </TaskRow>
-        <TaskRow
-          desc="No Tasks In Progress"
-          title="In Progress"
-          bgColor="bg-[#85D9F1]"
-        >
-          {getTasksByStatus("IN-PROGRESS").map((task) => (
-            <TaskCard
-              key={task.id}
-              id={task.id}
-              name={task.title}
-              dueDate={task.dueon}
-              status={task.status}
-              category={task.category}
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </TaskRow>
-        <TaskRow
-          desc="No Completed Tasks"
-          title="Completed"
-          bgColor="bg-[#CEFFCC]"
-        >
-          {getTasksByStatus("COMPLETED").map((task) => (
-            <TaskCard
-              key={task.id}
-              id={task.id}
-              name={task.title}
-              dueDate={task.dueon}
-              status={task.status}
-              category={task.category}
-              isCompleted
-              onDelete={handleDelete}
-              openMenuId={openMenuId}
-              setOpenMenuId={setOpenMenuId}
-            />
-          ))}
-        </TaskRow>
-      </div>
+      <Filter
+        searchQuery={filters.searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedCategory={filters.category}
+        onCategoryChange={setCategory}
+      />
+      {!hasResults && filters.searchQuery ? (
+        <Search />
+      ) : (
+        <>
+          <div className="hidden md:grid grid-cols-5 border-t border-t-gray-300 py-5 text-[13px] font-bold">
+            <div className="col-span-2">Task name</div>
+            <div>Due on</div>
+            <div>Task Status</div>
+            <div>Task Category</div>
+          </div>
+          <div className="mb-6 space-y-7">
+            <TaskRow
+              desc="No Tasks in To-Do"
+              title="Todo"
+              bgColor="bg-[#FAC3FF]"
+            >
+              <AddTask />
+              {getTasksByStatus("TO-DO").map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  name={task.title}
+                  dueDate={task.dueon}
+                  status={task.status}
+                  category={task.category}
+                  onDelete={handleDelete}
+                  openMenuId={openMenuId}
+                  setOpenMenuId={setOpenMenuId}
+                />
+              ))}
+            </TaskRow>
+            <TaskRow
+              desc="No Tasks In Progress"
+              title="In Progress"
+              bgColor="bg-[#85D9F1]"
+            >
+              {getTasksByStatus("IN-PROGRESS").map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  name={task.title}
+                  dueDate={task.dueon}
+                  status={task.status}
+                  category={task.category}
+                  onDelete={handleDelete}
+                  openMenuId={openMenuId}
+                  setOpenMenuId={setOpenMenuId}
+                />
+              ))}
+            </TaskRow>
+            <TaskRow
+              desc="No Completed Tasks"
+              title="Completed"
+              bgColor="bg-[#CEFFCC]"
+            >
+              {getTasksByStatus("COMPLETED").map((task) => (
+                <TaskCard
+                  key={task.id}
+                  id={task.id}
+                  name={task.title}
+                  dueDate={task.dueon}
+                  status={task.status}
+                  category={task.category}
+                  isCompleted
+                  onDelete={handleDelete}
+                  openMenuId={openMenuId}
+                  setOpenMenuId={setOpenMenuId}
+                />
+              ))}
+            </TaskRow>
+          </div>
+        </>
+      )}
     </div>
   );
 };

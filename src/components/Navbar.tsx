@@ -49,7 +49,7 @@ const Navbar: React.FC = () => {
                 {showLogout && (
                   <button
                     onClick={handleLogout}
-                    className="absolute cursor-pointer left-0 flex gap-2 items-center top-full mt-1 bg-[#FFF9F9] border border-gray-300 rounded-[12px] px-4 py-2 text-sm text-[#000000] hover:bg-gray-50 shadow-sm"
+                    className="absolute cursor-pointer right-0 md:left-0 md:right-auto flex gap-2 items-center top-full mt-1 bg-[#FFF9F9] border border-gray-300 rounded-[12px] px-4 py-2 text-sm text-[#000000] hover:bg-gray-50 shadow-sm"
                   >
                     <LogOut size={15} />
                     <span>Logout</span>

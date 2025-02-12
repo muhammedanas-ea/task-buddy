@@ -99,7 +99,7 @@ export default function CreateTaskModal({
       className="fixed inset-0 bg-black/30 flex items-center justify-center md:p-4 z-50"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-2xl w-full mt-20 md:mt-0 md:max-w-xl shadow-lg flex flex-col h-[calc(100vh-2rem)] md:h-auto max-h-[90vh]">
+      <div className="bg-white rounded-2xl w-full mt-20 md:mt-0 md:max-w-xl shadow-lg flex flex-col md:h-auto max-h-[91vh]">
         <div className="flex justify-between items-center p-4 border-b border-gray-300">
           <h2 className="text-lg font-medium text-gray-800">Create Task</h2>
           <button
