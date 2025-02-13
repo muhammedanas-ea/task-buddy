@@ -1,9 +1,10 @@
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import TaskRow from "../components/tasklist/TaskRow";
 import Filter from "../components/Filter";
 import TaskCard from "../components/tasklist/TaskCard";
 import AddTask from "../components/tasklist/AddTask";
 import useTasks from "../hooks/useTasks";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { GenerateError } from "../toast/Toast";
 import { db } from "../firebase/config";
@@ -28,6 +29,30 @@ const TaskList = () => {
     } catch (err) {
       console.error("Error deleting task:", err);
       GenerateError("Failed to delete task. Please try again.");
+    }
+  };
+
+  const onDragEnd = async (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    try {
+      const taskRef = doc(db, "tasks", draggableId);
+      await updateDoc(taskRef, {
+        status: destination.droppableId,
+        isCompleted: destination.droppableId === "COMPLETED"
+      });
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      GenerateError("Failed to update task status. Please try again.");
     }
   };
 
@@ -63,67 +88,75 @@ const TaskList = () => {
             <div>Task Status</div>
             <div>Task Category</div>
           </div>
-          <div className="mb-6 space-y-7">
-            <TaskRow
-              desc="No Tasks in To-Do"
-              title="Todo"
-              bgColor="bg-[#FAC3FF]"
-            >
-              <AddTask />
-              {getTasksByStatus("TO-DO").map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  name={task.title}
-                  dueDate={task.dueon}
-                  status={task.status}
-                  category={task.category}
-                  onDelete={handleDelete}
-                  openMenuId={openMenuId}
-                  setOpenMenuId={setOpenMenuId}
-                />
-              ))}
-            </TaskRow>
-            <TaskRow
-              desc="No Tasks In Progress"
-              title="In Progress"
-              bgColor="bg-[#85D9F1]"
-            >
-              {getTasksByStatus("IN-PROGRESS").map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  name={task.title}
-                  dueDate={task.dueon}
-                  status={task.status}
-                  category={task.category}
-                  onDelete={handleDelete}
-                  openMenuId={openMenuId}
-                  setOpenMenuId={setOpenMenuId}
-                />
-              ))}
-            </TaskRow>
-            <TaskRow
-              desc="No Completed Tasks"
-              title="Completed"
-              bgColor="bg-[#CEFFCC]"
-            >
-              {getTasksByStatus("COMPLETED").map((task) => (
-                <TaskCard
-                  key={task.id}
-                  id={task.id}
-                  name={task.title}
-                  dueDate={task.dueon}
-                  status={task.status}
-                  category={task.category}
-                  isCompleted
-                  onDelete={handleDelete}
-                  openMenuId={openMenuId}
-                  setOpenMenuId={setOpenMenuId}
-                />
-              ))}
-            </TaskRow>
-          </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className="mb-6 space-y-7">
+              <TaskRow
+                desc="No Tasks in To-Do"
+                title="Todo"
+                bgColor="bg-[#FAC3FF]"
+                droppableId="TO-DO"
+              >
+                <AddTask />
+                {getTasksByStatus("TO-DO").map((task, index) => (
+                  <TaskCard
+                    key={task.id}
+                    id={task.id}
+                    index={index}
+                    name={task.title}
+                    dueDate={task.dueon}
+                    status={task.status}
+                    category={task.category}
+                    onDelete={handleDelete}
+                    openMenuId={openMenuId}
+                    setOpenMenuId={setOpenMenuId}
+                  />
+                ))}
+              </TaskRow>
+              <TaskRow
+                desc="No Tasks In Progress"
+                title="In Progress"
+                bgColor="bg-[#85D9F1]"
+                droppableId="IN-PROGRESS"
+              >
+                {getTasksByStatus("IN-PROGRESS").map((task, index) => (
+                  <TaskCard
+                    key={task.id}
+                    id={task.id}
+                    index={index}
+                    name={task.title}
+                    dueDate={task.dueon}
+                    status={task.status}
+                    category={task.category}
+                    onDelete={handleDelete}
+                    openMenuId={openMenuId}
+                    setOpenMenuId={setOpenMenuId}
+                  />
+                ))}
+              </TaskRow>
+              <TaskRow
+                desc="No Completed Tasks"
+                title="Completed"
+                bgColor="bg-[#CEFFCC]"
+                droppableId="COMPLETED"
+              >
+                {getTasksByStatus("COMPLETED").map((task, index) => (
+                  <TaskCard
+                    key={task.id}
+                    id={task.id}
+                    index={index}
+                    name={task.title}
+                    dueDate={task.dueon}
+                    status={task.status}
+                    category={task.category}
+                    isCompleted
+                    onDelete={handleDelete}
+                    openMenuId={openMenuId}
+                    setOpenMenuId={setOpenMenuId}
+                  />
+                ))}
+              </TaskRow>
+            </div>
+          </DragDropContext>
         </>
       )}
     </div>
