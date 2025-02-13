@@ -19,7 +19,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen  relative flex items-center justify-center md:gap-5 md:justify-between px-6 md:px-0 md:pt-6 md:pl-14">
+    <div className="h-screen  relative flex items-center justify-center md:gap-5 md:justify-between px-6 md:px-0 md:pt-6 md:pl-14">
       {/* Left Section */}
       <div className="flex flex-col items-center md:items-start text-center md:text-left">
         <div className="flex items-center gap-3 mb-2">
