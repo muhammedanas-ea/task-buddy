@@ -1,13 +1,13 @@
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
 import { TaskCardProps } from "./type";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import drag from "../../assets/icons/drag_icon.png";
 import check from "../../assets/icons/checkmark.png";
 import completedCheck from "../../assets/icons/color-checkmark.png";
 import EditTaskModal from "../EditTaskModal";
-import { Draggable } from "@hello-pangea/dnd";
+import { Draggable } from '@hello-pangea/dnd';
 
 const TaskCard = ({
   id,
@@ -24,9 +24,6 @@ const TaskCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
-  const statusDropdownRef = useRef<HTMLDivElement>(null);
-  const ellipsisDropdownRef = useRef<HTMLDivElement>(null);
-
   const handleEllipsisClick = () => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -41,7 +38,7 @@ const TaskCard = ({
       const taskRef = doc(db, "tasks", id);
       await updateDoc(taskRef, {
         status: newStatus,
-        isCompleted: newStatus === "COMPLETED",
+        isCompleted: newStatus === "COMPLETED"
       });
       setIsStatusDropdownOpen(false);
     } catch (error) {
@@ -52,31 +49,8 @@ const TaskCard = ({
   const statusOptions = [
     { label: "TO-DO", value: "TO-DO" },
     { label: "IN-PROGRESS", value: "IN-PROGRESS" },
-    { label: "COMPLETED", value: "COMPLETED" },
+    { label: "COMPLETED", value: "COMPLETED" }
   ];
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        statusDropdownRef.current &&
-        !statusDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsStatusDropdownOpen(false);
-      }
-
-      if (
-        ellipsisDropdownRef.current &&
-        !ellipsisDropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpenMenuId(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [setOpenMenuId]);
 
   return (
     <Draggable draggableId={id} index={index}>
@@ -87,13 +61,11 @@ const TaskCard = ({
           className="grid items-center grid-cols-3 md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
-            <input
-              type="checkbox"
+            <input 
+              type="checkbox" 
               checked={isCompleted}
-              onChange={() =>
-                updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")
-              }
-              className="rounded border-gray-300"
+              onChange={() => updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")}
+              className="rounded border-gray-300" 
             />
             <div {...provided.dragHandleProps}>
               <img src={drag} alt="drag" />
@@ -103,13 +75,11 @@ const TaskCard = ({
             ) : (
               <img src={completedCheck} alt="completedCheck" />
             )}
-            <span className={`${isCompleted ? "line-through" : ""}`}>
-              {name}
-            </span>
+            <span className={`${isCompleted ? "line-through" : ""}`}>{name}</span>
           </div>
           <span className="hidden md:block">{dueDate}</span>
-          <div className="hidden md:block relative" ref={statusDropdownRef}>
-            <button
+          <div className="hidden md:block relative">
+            <button 
               className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer"
               onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
             >
@@ -129,10 +99,7 @@ const TaskCard = ({
               </div>
             )}
           </div>
-          <div
-            className="flex justify-end md:justify-between items-center relative"
-            ref={ellipsisDropdownRef}
-          >
+          <div className="flex justify-end md:justify-between items-center relative">
             <span className="hidden md:block">{category}</span>
             <button
               onClick={handleEllipsisClick}

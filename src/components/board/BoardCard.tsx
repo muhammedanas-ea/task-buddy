@@ -1,6 +1,5 @@
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
 import { BoardCardProps } from "./type";
-import { useRef, useEffect } from "react";
 
 const BoardCard = ({
   id,
@@ -12,8 +11,6 @@ const BoardCard = ({
   openMenuId,
   setOpenMenuId,
 }: BoardCardProps) => {
-  const ellipsisDropdownRef = useRef<HTMLDivElement>(null);
-
   const handleEllipsisClick = () => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -22,22 +19,6 @@ const BoardCard = ({
     onDelete(id);
     setOpenMenuId(null);
   };
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        ellipsisDropdownRef.current &&
-        !ellipsisDropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpenMenuId(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [setOpenMenuId]);
 
   return (
     <div className="bg-white p-4 rounded-[12px] flex flex-col justify-between min-h-25 relative">
@@ -60,10 +41,7 @@ const BoardCard = ({
         <p>{dueDate}</p>
       </div>
       {openMenuId === id && (
-        <div
-          ref={ellipsisDropdownRef}
-          className="absolute w-32 right-5 top-8 bg-white border border-gray-300 rounded-[12px] shadow-lg z-10 p-2"
-        >
+        <div className="absolute w-32 right-5 top-8 bg-white border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
           <button className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100">
             <EditIcon size={16} />
             Edit
