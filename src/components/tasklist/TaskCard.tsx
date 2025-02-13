@@ -53,14 +53,7 @@ const TaskCard = ({
           className="grid items-center md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
-            <input
-              type="checkbox"
-              checked={isCompleted}
-              onChange={() =>
-                updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")
-              }
-              className="rounded border-gray-300"
-            />
+            <input type="checkbox" className="rounded border-gray-300" />
             <div>
               <img src={drag} alt="drag" />
             </div>
