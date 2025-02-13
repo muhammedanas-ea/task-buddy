@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   AlignJustify,
@@ -13,6 +13,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [showLogout, setShowLogout] = useState<boolean>(false);
   const navigate = useNavigate();
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const { user, logOut } = useUserAuth();
 
@@ -25,6 +26,22 @@ const Navbar: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setShowLogout(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <div className="bg-[#FAEEFC] md:bg-white shadow-sm">
@@ -33,7 +50,7 @@ const Navbar: React.FC = () => {
             <ClipboardList className="hidden md:block" size={29} />
             <h1 className="text-lg md:text-2xl font-medium">TaskBuddy</h1>
           </div>
-          <div>
+          <div ref={profileRef}>
             <div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setShowLogout((prev) => !prev)}

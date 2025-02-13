@@ -1,5 +1,5 @@
 import { ChevronDown, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import CreateTaskModal from "./CreateTaskModal";
 import { TaskCategory } from "../hooks/useTasks";
 
@@ -14,15 +14,32 @@ const Filter = ({
   searchQuery,
   onSearchChange,
   selectedCategory,
-  onCategoryChange
+  onCategoryChange,
 }: FilterProps) => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleCategorySelect = (category: TaskCategory) => {
     onCategoryChange(selectedCategory === category ? null : category);
     setShowCategoryDropdown(false);
   };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCategoryDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="py-6">
@@ -38,38 +55,40 @@ const Filter = ({
         <div className="flex flex-col md:flex-row md:items-center gap-3 relative">
           <h1 className="text-[12px] font-medium text-gray-500">Filter by:</h1>
           <div className="flex items-center gap-3">
-            <button
-              className={`flex cursor-pointer items-center gap-3 px-4 py-2 border rounded-[60px] ${
-                selectedCategory 
-                  ? 'border-[#7B1984] text-[#7B1984]' 
-                  : 'border-gray-300 text-gray-500'
-              }`}
-              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            >
-              <span className="text-[12px] font-medium">
-                {selectedCategory || "Category"}
-              </span>
-              <ChevronDown
-                className={`${showCategoryDropdown ? "rotate-180" : ""}`}
-                size={18}
-              />
-            </button>
-            {showCategoryDropdown && (
-              <div className="absolute w-32 top-10 left-12 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10">
-                <button
-                  onClick={() => handleCategorySelect("Work")}
-                  className="block w-full text-left rounded-t-[12px] px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100"
-                >
-                  Work
-                </button>
-                <button
-                  onClick={() => handleCategorySelect("Personal")}
-                  className="block w-full text-left rounded-b-[12px] px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100"
-                >
-                  Personal
-                </button>
-              </div>
-            )}
+            <div ref={dropdownRef} className="relative">
+              <button
+                className={`flex cursor-pointer items-center gap-3 px-4 py-2 border rounded-[60px] ${
+                  selectedCategory
+                    ? "border-[#7B1984] text-[#7B1984]"
+                    : "border-gray-300 text-gray-500"
+                }`}
+                onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              >
+                <span className="text-[12px] font-medium">
+                  {selectedCategory || "Category"}
+                </span>
+                <ChevronDown
+                  className={`${showCategoryDropdown ? "rotate-180" : ""}`}
+                  size={18}
+                />
+              </button>
+              {showCategoryDropdown && (
+                <div className="absolute w-32 top-10 left-0 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10">
+                  <button
+                    onClick={() => handleCategorySelect("Work")}
+                    className="block w-full text-left rounded-t-[12px] px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    Work
+                  </button>
+                  <button
+                    onClick={() => handleCategorySelect("Personal")}
+                    className="block w-full text-left rounded-b-[12px] px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    Personal
+                  </button>
+                </div>
+              )}
+            </div>
             <button className="flex text-gray-500 items-center gap-3 px-4 py-2 border border-gray-300 rounded-[60px]">
               <span className="text-[12px] font-medium">Due Date</span>
               <ChevronDown size={18} />
