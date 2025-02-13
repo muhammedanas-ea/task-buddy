@@ -12,7 +12,7 @@ const TaskRow = ({ title, bgColor, desc, children, droppableId }: TaskRowProps) 
   return (
     <div>
       <div
-        className={`flex items-center ${bgColor} justify-between p-3 rounded-lg cursor-pointer`}
+        className={`flex items-center ${bgColor} justify-between p-3 rounded-t-lg cursor-pointer`}
       >
         <h2 className="font-semibold">
           {title} ({taskCount})
