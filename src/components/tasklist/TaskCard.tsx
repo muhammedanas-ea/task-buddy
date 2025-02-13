@@ -18,19 +18,11 @@ const TaskCard = ({
   isCompleted,
   category,
   onDelete,
-  openMenuId,
-  setOpenMenuId,
 }: TaskCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
-
-  const handleEllipsisClick = () => {
-    setOpenMenuId(openMenuId === id ? null : id);
-  };
 
   const handleDeleteClick = () => {
     onDelete(id);
-    setOpenMenuId(null);
   };
 
   const updateTaskStatus = async (newStatus: string) => {
@@ -40,7 +32,6 @@ const TaskCard = ({
         status: newStatus,
         isCompleted: newStatus === "COMPLETED",
       });
-      setIsStatusDropdownOpen(false);
     } catch (error) {
       console.error("Error updating task status:", error);
     }
@@ -83,37 +74,29 @@ const TaskCard = ({
             </span>
           </div>
           <span className="hidden md:block">{dueDate}</span>
-          <div className="hidden md:block relative">
-            <button
-              className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer"
-              onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-            >
+          <div className="hidden md:block relative menu-hover group">
+            <button className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer">
               {status}
             </button>
-            {isStatusDropdownOpen && (
-              <div className="absolute w-32 top-8 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10">
-                {statusOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updateTaskStatus(option.value)}
-                    className="block w-full text-left px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100 first:rounded-t-[12px] last:rounded-b-[12px]"
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="absolute invisible group-hover:visible top-7 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10">
+              {statusOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateTaskStatus(option.value)}
+                  className="block w-full text-left px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100 first:rounded-t-[12px] last:rounded-b-[12px]"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="flex justify-end md:justify-between items-center relative">
             <span className="hidden md:block">{category}</span>
-            <button
-              onClick={handleEllipsisClick}
-              className="hover:text-gray-700 cursor-pointer"
-            >
-              <Ellipsis className="w-4 h-4" />
-            </button>
-            {openMenuId === id && (
-              <div className="absolute w-32 right-0 top-4 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
+            <div className="menu-hover relative group">
+              <button className="hover:text-gray-700 cursor-pointer">
+                <Ellipsis className="w-4 h-4" />
+              </button>
+              <div className="absolute w-32 invisible group-hover:visible right-0 top-3 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100"
@@ -133,7 +116,7 @@ const TaskCard = ({
                   <Trash2 size={16} /> Delete
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </div>
       )}

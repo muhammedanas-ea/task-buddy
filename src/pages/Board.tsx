@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { BoardColumn } from "../components/board/BoardColumn";
 import BoardCard from "../components/board/BoardCard";
 import Filter from "../components/Filter";
@@ -10,7 +9,6 @@ import Loading from "../components/Loading";
 import Search from "../components/Search";
 
 const Board = () => {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const {
     loading,
     error,
@@ -69,8 +67,6 @@ const Board = () => {
                 category={task.category}
                 dueDate={task.dueon}
                 onDelete={handleDelete}
-                openMenuId={openMenuId}
-                setOpenMenuId={setOpenMenuId}
               />
             ))}
           </BoardColumn>
@@ -87,8 +83,6 @@ const Board = () => {
                 category={task.category}
                 dueDate={task.dueon}
                 onDelete={handleDelete}
-                openMenuId={openMenuId}
-                setOpenMenuId={setOpenMenuId}
               />
             ))}
           </BoardColumn>
@@ -106,8 +100,6 @@ const Board = () => {
                 dueDate={task.dueon}
                 isCompleted
                 onDelete={handleDelete}
-                openMenuId={openMenuId}
-                setOpenMenuId={setOpenMenuId}
               />
             ))}
           </BoardColumn>

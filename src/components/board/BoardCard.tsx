@@ -1,5 +1,7 @@
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
 import { BoardCardProps } from "./type";
+import EditTaskModal from "../EditTaskModal";
+import { useState } from "react";
 
 const BoardCard = ({
   id,
@@ -8,16 +10,11 @@ const BoardCard = ({
   category,
   dueDate,
   onDelete,
-  openMenuId,
-  setOpenMenuId,
 }: BoardCardProps) => {
-  const handleEllipsisClick = () => {
-    setOpenMenuId(openMenuId === id ? null : id);
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDeleteClick = () => {
     onDelete(id);
-    setOpenMenuId(null);
   };
 
   return (
@@ -30,30 +27,34 @@ const BoardCard = ({
         >
           {title}
         </h2>
-        <Ellipsis
-          onClick={handleEllipsisClick}
-          className="cursor-pointer"
-          size={16}
-        />
+        <div className="relative menu:hover group">
+          <Ellipsis className="cursor-pointer" size={16} />
+          <div className="absolute invisible group-hover:visible w-32 right-0 top-3 bg-white border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100"
+            >
+              <EditIcon size={16} />
+              Edit
+            </button>
+            <EditTaskModal
+              taskId={id}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
+            <button
+              onClick={handleDeleteClick}
+              className="flex gap-2 text-red-500 text-[16px] items-center w-full p-1 hover:bg-gray-100"
+            >
+              <Trash2 size={16} /> Delete
+            </button>
+          </div>
+        </div>
       </div>
       <div className="flex items-center justify-between text-[11px] text-gray-400">
         <p>{category}</p>
         <p>{dueDate}</p>
       </div>
-      {openMenuId === id && (
-        <div className="absolute w-32 right-5 top-8 bg-white border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
-          <button className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100">
-            <EditIcon size={16} />
-            Edit
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="flex gap-2 text-red-500 text-[16px] items-center w-full p-1 hover:bg-gray-100"
-          >
-            <Trash2 size={16} /> Delete
-          </button>
-        </div>
-      )}
     </div>
   );
 };

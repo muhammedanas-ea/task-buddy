@@ -1,18 +1,16 @@
-import { DragDropContext, DropResult } from '@hello-pangea/dnd';
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import TaskRow from "../components/tasklist/TaskRow";
 import Filter from "../components/Filter";
 import TaskCard from "../components/tasklist/TaskCard";
 import AddTask from "../components/tasklist/AddTask";
 import useTasks from "../hooks/useTasks";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { useState } from "react";
 import { GenerateError } from "../toast/Toast";
 import { db } from "../firebase/config";
 import Loading from "../components/Loading";
 import Search from "../components/Search";
 
 const TaskList = () => {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const {
     loading,
     error,
@@ -48,7 +46,7 @@ const TaskList = () => {
       const taskRef = doc(db, "tasks", draggableId);
       await updateDoc(taskRef, {
         status: destination.droppableId,
-        isCompleted: destination.droppableId === "COMPLETED"
+        isCompleted: destination.droppableId === "COMPLETED",
       });
     } catch (error) {
       console.error("Error updating task status:", error);
@@ -107,8 +105,6 @@ const TaskList = () => {
                     status={task.status}
                     category={task.category}
                     onDelete={handleDelete}
-                    openMenuId={openMenuId}
-                    setOpenMenuId={setOpenMenuId}
                   />
                 ))}
               </TaskRow>
@@ -128,8 +124,6 @@ const TaskList = () => {
                     status={task.status}
                     category={task.category}
                     onDelete={handleDelete}
-                    openMenuId={openMenuId}
-                    setOpenMenuId={setOpenMenuId}
                   />
                 ))}
               </TaskRow>
@@ -150,8 +144,6 @@ const TaskList = () => {
                     category={task.category}
                     isCompleted
                     onDelete={handleDelete}
-                    openMenuId={openMenuId}
-                    setOpenMenuId={setOpenMenuId}
                   />
                 ))}
               </TaskRow>

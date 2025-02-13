@@ -15,6 +15,4 @@ export interface TaskCardProps {
   category: string;
   isCompleted?: boolean;
   onDelete: (id: string) => void;
-  openMenuId: string | null;
-  setOpenMenuId: (id: string | null) => void;
 }
