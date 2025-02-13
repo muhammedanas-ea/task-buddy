@@ -7,7 +7,7 @@ import drag from "../../assets/icons/drag_icon.png";
 import check from "../../assets/icons/checkmark.png";
 import completedCheck from "../../assets/icons/color-checkmark.png";
 import EditTaskModal from "../EditTaskModal";
-import { Draggable } from '@hello-pangea/dnd';
+import { Draggable } from "@hello-pangea/dnd";
 
 const TaskCard = ({
   id,
@@ -38,7 +38,7 @@ const TaskCard = ({
       const taskRef = doc(db, "tasks", id);
       await updateDoc(taskRef, {
         status: newStatus,
-        isCompleted: newStatus === "COMPLETED"
+        isCompleted: newStatus === "COMPLETED",
       });
       setIsStatusDropdownOpen(false);
     } catch (error) {
@@ -49,7 +49,7 @@ const TaskCard = ({
   const statusOptions = [
     { label: "TO-DO", value: "TO-DO" },
     { label: "IN-PROGRESS", value: "IN-PROGRESS" },
-    { label: "COMPLETED", value: "COMPLETED" }
+    { label: "COMPLETED", value: "COMPLETED" },
   ];
 
   return (
@@ -62,13 +62,15 @@ const TaskCard = ({
           className="grid items-center grid-cols-3 md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               checked={isCompleted}
-              onChange={() => updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")}
-              className="rounded border-gray-300" 
+              onChange={() =>
+                updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")
+              }
+              className="rounded border-gray-300"
             />
-            <div {...provided.dragHandleProps}>
+            <div>
               <img src={drag} alt="drag" />
             </div>
             {!isCompleted ? (
@@ -76,11 +78,13 @@ const TaskCard = ({
             ) : (
               <img src={completedCheck} alt="completedCheck" />
             )}
-            <span className={`${isCompleted ? "line-through" : ""}`}>{name}</span>
+            <span className={`${isCompleted ? "line-through" : ""}`}>
+              {name}
+            </span>
           </div>
           <span className="hidden md:block">{dueDate}</span>
           <div className="hidden md:block relative">
-            <button 
+            <button
               className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer"
               onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
             >

@@ -19,7 +19,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center md:gap-5 md:justify-between px-6 md:px-0 md:pt-6 md:pl-14">
+    <div className="min-h-screen  relative flex items-center justify-center md:gap-5 md:justify-between px-6 md:px-0 md:pt-6 md:pl-14">
       {/* Left Section */}
       <div className="flex flex-col items-center md:items-start text-center md:text-left">
         <div className="flex items-center gap-3 mb-2">
@@ -68,12 +68,12 @@ const Login = () => {
         <img
           src={circle}
           alt="Background Circle"
-          className="max-w-[860px] w-full max-h-[662px] object-cover"
+          className="max-w-[860px] w-full max-h-[600px] object-cover"
         />
         <img
           src={table}
           alt="Task Table"
-          className="absolute right-0 bottom-3 h-[90%] max-h-[662px] w-auto object-cover"
+          className="absolute right-0 bottom-3 h-[90%] max-h-[600px] w-auto object-cover"
         />
       </div>
     </div>
