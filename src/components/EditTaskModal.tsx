@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { db, storage } from "../firebase/config";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUserAuth } from "../context/userAuthContext";
+import { validationSchema } from "../yup/validation";
 
 interface EditTaskModalProps {
   taskId: string;
@@ -34,18 +34,6 @@ interface FormValues {
   imageUrl?: string | null;
 }
 
-const validationSchema = Yup.object({
-  title: Yup.string().required("Title is required"),
-  description: Yup.string().required("Description is required"),
-  category: Yup.string()
-    .oneOf(["Work", "Personal"])
-    .required("Category is required"),
-  dueon: Yup.string().required("Due date is required"),
-  status: Yup.string()
-    .oneOf(["TO-DO", "IN-PROGRESS", "COMPLETED"])
-    .required("Status is required"),
-});
-
 export default function EditTaskModal({
   taskId,
   isOpen,
@@ -56,8 +44,6 @@ export default function EditTaskModal({
   const [activeTab, setActiveTab] = useState<"details" | "activity">("details");
   const [data, setData] = useState<TaskData | null>(null);
   const { user } = useUserAuth();
-
-  console.log(data);
 
   const initialValues: FormValues = {
     title: "",
@@ -71,7 +57,7 @@ export default function EditTaskModal({
 
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
         setIsSubmitting(true);
