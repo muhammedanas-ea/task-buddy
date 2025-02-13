@@ -11,7 +11,7 @@ const Search = () => {
             alt="SearchNotFound"
           />
         </div>
-        <h1 className="text-2xl text-[#2F2F2F] font-bold text-center">
+        <h1 className="text-xl text-[#2F2F2F] font-bold text-center">
           It looks like we can't find any results <br /> that match.
         </h1>
       </div>

@@ -1,8 +1,12 @@
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
 import { TaskCardProps } from "./type";
+import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase/config"; // Make sure you have this firebase config file
 import drag from "../../assets/icons/drag_icon.png";
 import check from "../../assets/icons/checkmark.png";
 import completedCheck from "../../assets/icons/color-checkmark.png";
+import EditTaskModal from "../EditTaskModal";
 
 const TaskCard = ({
   id,
@@ -15,6 +19,9 @@ const TaskCard = ({
   openMenuId,
   setOpenMenuId,
 }: TaskCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+
   const handleEllipsisClick = () => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -24,10 +31,34 @@ const TaskCard = ({
     setOpenMenuId(null);
   };
 
+  const updateTaskStatus = async (newStatus: string) => {
+    try {
+      const taskRef = doc(db, "tasks", id);
+      await updateDoc(taskRef, {
+        status: newStatus,
+        isCompleted: newStatus === "COMPLETED"
+      });
+      setIsStatusDropdownOpen(false);
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
+  };
+
+  const statusOptions = [
+    { label: "TO-DO", value: "TO-DO" },
+    { label: "IN-PROGRESS", value: "IN-PROGRESS" },
+    { label: "COMPLETED", value: "COMPLETED" }
+  ];
+
   return (
-    <div className="grid items-center md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0">
-      <div className="flex items-center gap-2 md:col-span-2">
-        <input type="checkbox" className="rounded border-gray-300" />
+    <div className="grid items-center grid-cols-3 md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0">
+      <div className="flex items-center gap-2 col-span-2">
+        <input 
+          type="checkbox" 
+          checked={isCompleted}
+          onChange={() => updateTaskStatus(isCompleted ? "TO-DO" : "COMPLETED")}
+          className="rounded border-gray-300" 
+        />
         <img src={drag} alt="drag" />
         {!isCompleted ? (
           <img src={check} alt="check" />
@@ -37,13 +68,29 @@ const TaskCard = ({
         <span className={`${isCompleted ? "line-through" : ""}`}>{name}</span>
       </div>
       <span className="hidden md:block">{dueDate}</span>
-      <div className="hidden md:block">
-        <button className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer">
+      <div className="hidden md:block relative">
+        <button 
+          className="bg-[#DDDADD] hover:bg-gray-400 px-4 rounded-[4px] py-1 cursor-pointer"
+          onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+        >
           {status}
         </button>
+        {isStatusDropdownOpen && (
+          <div className="absolute w-32 top-8 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10">
+            {statusOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => updateTaskStatus(option.value)}
+                className="block w-full text-left px-4 py-2 text-[12px] font-medium text-gray-700 hover:bg-gray-100 first:rounded-t-[12px] last:rounded-b-[12px]"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      <div className="md:flex justify-between items-center hidden relative">
-        <span>{category}</span>
+      <div className="flex justify-end md:justify-between items-center relative">
+        <span className="hidden md:block">{category}</span>
         <button
           onClick={handleEllipsisClick}
           className="hover:text-gray-700 cursor-pointer"
@@ -52,10 +99,18 @@ const TaskCard = ({
         </button>
         {openMenuId === id && (
           <div className="absolute w-32 right-0 top-4 bg-[#FFF9F9] border border-gray-300 rounded-[12px] shadow-lg z-10 p-2">
-            <button className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex text-[16px] gap-2 items-center w-full p-1 hover:bg-gray-100"
+            >
               <EditIcon size={16} />
               Edit
             </button>
+            <EditTaskModal
+              taskId={id}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
             <button
               onClick={handleDeleteClick}
               className="flex gap-2 text-[#DA2F2F] text-[16px] items-center w-full p-1 hover:bg-gray-100"
