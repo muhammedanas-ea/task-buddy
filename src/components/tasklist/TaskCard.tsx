@@ -58,6 +58,7 @@ const TaskCard = ({
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
+          {...provided.dragHandleProps}
           className="grid items-center grid-cols-3 md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
