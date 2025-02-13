@@ -1,5 +1,5 @@
+// TaskCard.tsx
 import { EditIcon, Ellipsis, Trash2 } from "lucide-react";
-import { TaskCardProps } from "./type";
 import { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
@@ -8,6 +8,19 @@ import check from "../../assets/icons/checkmark.png";
 import completedCheck from "../../assets/icons/color-checkmark.png";
 import EditTaskModal from "../EditTaskModal";
 import { Draggable } from "@hello-pangea/dnd";
+
+interface TaskCardProps {
+  id: string;
+  index: number;
+  name: string;
+  dueDate: string;
+  status: string;
+  isCompleted?: boolean;
+  category: string;
+  onDelete: (id: string) => void;
+  isSelected?: boolean;
+  onCheckboxChange: (id: string, checked: boolean) => void;
+}
 
 const TaskCard = ({
   id,
@@ -18,6 +31,8 @@ const TaskCard = ({
   isCompleted,
   category,
   onDelete,
+  isSelected,
+  onCheckboxChange,
 }: TaskCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -53,7 +68,12 @@ const TaskCard = ({
           className="grid items-center md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
-            <input type="checkbox" className="rounded border-gray-300" />
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => onCheckboxChange(id, e.target.checked)}
+              className="rounded border-gray-300"
+            />
             <div>
               <img src={drag} alt="drag" />
             </div>
@@ -83,7 +103,7 @@ const TaskCard = ({
               ))}
             </div>
           </div>
-          <div className=" hidden md:flex md:justify-between items-center relative">
+          <div className="hidden md:flex md:justify-between items-center relative">
             <span>{category}</span>
             <div className="menu-hover relative group">
               <button className="hover:text-gray-700 cursor-pointer">
