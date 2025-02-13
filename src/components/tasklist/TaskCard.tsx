@@ -50,7 +50,7 @@ const TaskCard = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="grid items-center grid-cols-3 md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
+          className="grid items-center md:grid-cols-5 p-4 border-b text-[14px] bg-[#F1F1F1] hover:bg-white border-b-gray-300 last:border-b-0"
         >
           <div className="flex items-center gap-2 col-span-2">
             <input
@@ -90,8 +90,8 @@ const TaskCard = ({
               ))}
             </div>
           </div>
-          <div className="flex justify-end md:justify-between items-center relative">
-            <span className="hidden md:block">{category}</span>
+          <div className=" hidden md:flex md:justify-between items-center relative">
+            <span>{category}</span>
             <div className="menu-hover relative group">
               <button className="hover:text-gray-700 cursor-pointer">
                 <Ellipsis className="w-4 h-4" />
